@@ -31,6 +31,7 @@ function(ccrutch_fetch_sources name)
     cmake_parse_arguments(PARSE_ARGV 1 ARG "" "REQUIRED_FILE;GIT_REPO_NAME;GIT_TAG" "")
 
     if(EXISTS "${CCRUTCH_EXTERNAL_DIR}/${name}/${ARG_REQUIRED_FILE}")
+        message(VERBOSE "Fetching sources: ${name} - skipped")
         return()
     endif()
 
@@ -41,14 +42,15 @@ function(ccrutch_fetch_sources name)
     FetchContent_GetProperties(${name})
 
     if(${name}_POPULATED)
-        return()
+        message(VERBOSE "Fetching sources: ${name} - populated")
+    else()
+        file(REMOVE_RECURSE
+            "${FETCHCONTENT_BASE_DIR}/${name}-src/"
+            "${FETCHCONTENT_BASE_DIR}/${name}-build/"
+            "${FETCHCONTENT_BASE_DIR}/${name}-subbuild/")
+        message(STATUS "Fetching sources: ${name} - downloading")
+        FetchContent_Populate(${name})
     endif()
-
-    file(REMOVE_RECURSE
-        "${FETCHCONTENT_BASE_DIR}/${name}-src/"
-        "${FETCHCONTENT_BASE_DIR}/${name}-build/"
-        "${FETCHCONTENT_BASE_DIR}/${name}-subbuild/")
-    FetchContent_Populate(${name})
 
     if(NOT EXISTS "${CCRUTCH_EXTERNAL_DIR}/${name}/${ARG_REQUIRED_FILE}")
         message(FATAL_ERROR "missing required file: ${CCRUTCH_EXTERNAL_DIR}/${name}/${ARG_REQUIRED_FILE}")
