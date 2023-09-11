@@ -20,7 +20,7 @@ if(DEFINED ENV{CI_JOB_TOKEN})
     # Settings -> CI/CD -> Token Access -> Limit access to this project
     set(CCRUTCH_GIT_URL_BASE "https://gitlab-ci-token:$ENV{CI_JOB_TOKEN}@gitlab.com/" CACHE STRING "")
 elseif(DEFINED ENV{GITHUB_TOKEN})
-    set(CCRUTCH_GIT_URL_BASE "https://$ENV{GITHUB_TOKEN}@github.com/" CACHE STRING "")
+    set(CCRUTCH_GIT_URL_BASE "https://x-access-token:$ENV{GITHUB_TOKEN}@github.com/" CACHE STRING "")
     #set(GIT_URL_BASE "https://x-access-token:$ENV{GITHUB_TOKEN}@github.com/iKoznov-GitLab-Mirror")
 else()
     set(CCRUTCH_GIT_URL_BASE "git@gitlab.com:" CACHE STRING "")
