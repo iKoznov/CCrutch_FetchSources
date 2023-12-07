@@ -24,8 +24,8 @@ block()
             COMMAND_ERROR_IS_FATAL ANY
     )
 
-    string(FIND "${origin}" "https://gitlab.com/" not_gitlab)
-    if(NOT not_gitlab)
+    string(FIND "${origin}" "https://gitlab.com/" not_starts_with)
+    if(NOT not_starts_with)
         if(DEFINED ENV{CI_JOB_TOKEN})
             # if fails, disable GitLab project setting:
             # Settings -> CI/CD -> Token Access -> Limit access to this project
@@ -35,14 +35,24 @@ block()
         endif()
     endif()
 
-    string(FIND "${origin}" "https://github.com/" not_github)
-    if(NOT not_github)
+    string(FIND "${origin}" "git@github.com:" not_starts_with)
+    if(NOT not_starts_with)
+        set(CCRUTCH_GIT_URL_BASE "git@gitlab.com:")
+    endif()
+
+    string(FIND "${origin}" "https://github.com/" not_starts_with)
+    if(NOT not_starts_with)
         if(DEFINED ENV{GITHUB_TOKEN})
             set(CCRUTCH_GIT_URL_BASE "https://x-access-token:$ENV{GITHUB_TOKEN}@github.com/")
             #set(GIT_URL_BASE "https://x-access-token:$ENV{GITHUB_TOKEN}@github.com/iKoznov-GitLab-Mirror")
         else()
             set(CCRUTCH_GIT_URL_BASE "https://github.com/")
         endif()
+    endif()
+
+    string(FIND "${origin}" "git@github.com:" not_starts_with)
+    if(NOT not_starts_with)
+        set(CCRUTCH_GIT_URL_BASE "git@github.com:")
     endif()
 
     if(NOT CCRUTCH_GIT_URL_BASE)
