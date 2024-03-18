@@ -19,7 +19,10 @@ find_package(Git REQUIRED)
 
 block()
     execute_process(
-            COMMAND "${GIT_EXECUTABLE}" config --get remote.origin.url
+            COMMAND "${GIT_EXECUTABLE}" config
+                --file "${CMAKE_SOURCE_DIR}/.git/config"
+                --get remote.origin.url
+            OUTPUT_STRIP_TRAILING_WHITESPACE
             OUTPUT_VARIABLE origin
             COMMAND_ERROR_IS_FATAL ANY
     )
