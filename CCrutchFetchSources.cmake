@@ -18,7 +18,7 @@ set(CCRUTCH_EXTERNAL_DIR "${CMAKE_SOURCE_DIR}/external" CACHE PATH "")
 function(ccrutch_get_git_url_base)
     cmake_parse_arguments(PARSE_ARGV 0 ARG "" "GIT_REPO;OUTPUT_VARIABLE" "")
 
-    if(CACHE ${ARG_OUTPUT_VARIABLE})
+    if(DEFINED ${ARG_OUTPUT_VARIABLE})
         return()
     endif()
 
