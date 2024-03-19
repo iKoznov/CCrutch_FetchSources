@@ -38,7 +38,7 @@ block()
         endif()
     endif()
 
-    string(FIND "${origin}" "git@github.com:" not_starts_with)
+    string(FIND "${origin}" "git@gitlab.com:" not_starts_with)
     if(NOT not_starts_with)
         set(CCRUTCH_GIT_URL_BASE "git@gitlab.com:")
     endif()
