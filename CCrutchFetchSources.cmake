@@ -15,12 +15,18 @@ include(FetchContent)
 
 set(CCRUTCH_EXTERNAL_DIR "${CMAKE_SOURCE_DIR}/external" CACHE PATH "")
 
-find_package(Git REQUIRED)
+function(ccrutch_get_git_url_base)
+    cmake_parse_arguments(PARSE_ARGV 0 ARG "" "GIT_REPO;OUTPUT_VARIABLE" "")
 
-block()
+    if(CACHE ${ARG_OUTPUT_VARIABLE})
+        return()
+    endif()
+
+    find_package(Git REQUIRED)
+
     execute_process(
             COMMAND "${GIT_EXECUTABLE}" config
-                --file "${CMAKE_SOURCE_DIR}/.git/config"
+                --file "${ARG_GIT_REPO}/.git/config"
                 --get remote.origin.url
             OUTPUT_STRIP_TRAILING_WHITESPACE
             OUTPUT_VARIABLE origin
@@ -63,8 +69,8 @@ block()
         message(FATAL_ERROR "please provide git remote origin url")
     endif()
 
-    set(CCRUTCH_GIT_URL_BASE "${CCRUTCH_GIT_URL_BASE}" CACHE STRING "")
-endblock()
+    set(${ARG_OUTPUT_VARIABLE} "${CCRUTCH_GIT_URL_BASE}" CACHE STRING "")
+endfunction()
 
 
 function(ccrutch_fetch_sources name)
@@ -74,6 +80,11 @@ function(ccrutch_fetch_sources name)
         message(VERBOSE "Fetching sources: ${name} - skipped")
         return()
     endif()
+
+    ccrutch_get_git_url_base(
+        GIT_REPO "${CMAKE_SOURCE_DIR}"
+        OUTPUT_VARIABLE CCRUTCH_GIT_URL_BASE
+    )
 
     FetchContent_Declare(${name}
         SOURCE_DIR "${CCRUTCH_EXTERNAL_DIR}/${name}"
