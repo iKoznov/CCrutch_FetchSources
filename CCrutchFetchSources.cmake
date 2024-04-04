@@ -13,8 +13,6 @@ include(FetchContent)
 	https://cmake.org/cmake/help/latest/command/cmake_language.html#provider-examples
 ]]
 
-set(CCRUTCH_EXTERNAL_DIR "${CMAKE_SOURCE_DIR}/external" CACHE PATH "")
-
 function(ccrutch_get_git_url_base)
     cmake_parse_arguments(PARSE_ARGV 0 ARG "" "GIT_REPO;OUTPUT_VARIABLE" "")
 
@@ -75,6 +73,7 @@ endfunction()
 
 function(ccrutch_fetch_sources name)
     cmake_parse_arguments(PARSE_ARGV 1 ARG "" "REQUIRED_FILE;GIT_REPO_NAME;GIT_TAG" "")
+    set(CCRUTCH_EXTERNAL_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
     if(EXISTS "${CCRUTCH_EXTERNAL_DIR}/${name}/${ARG_REQUIRED_FILE}")
         message(VERBOSE "Fetching sources: ${name} - skipped")
