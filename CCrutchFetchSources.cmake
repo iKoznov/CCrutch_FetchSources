@@ -36,38 +36,36 @@ function(ccrutch_get_git_url_base)
         if(DEFINED ENV{CI_JOB_TOKEN})
             # if fails, disable GitLab project setting:
             # Settings -> CI/CD -> Token Access -> Limit access to this project
-            set(CCRUTCH_GIT_URL_BASE "https://gitlab-ci-token:$ENV{CI_JOB_TOKEN}@gitlab.com/")
+            set(_git_url_base "https://gitlab-ci-token:$ENV{CI_JOB_TOKEN}@gitlab.com/")
         else()
-            set(CCRUTCH_GIT_URL_BASE "https://gitlab.com/")
+            set(_git_url_base "https://gitlab.com/")
         endif()
     endif()
 
     string(FIND "${origin}" "git@gitlab.com:" not_starts_with)
     if(NOT not_starts_with)
-        set(CCRUTCH_GIT_URL_BASE "git@gitlab.com:")
+        set(_git_url_base "git@gitlab.com:")
     endif()
 
     string(FIND "${origin}" "https://github.com/" not_starts_with)
     if(NOT not_starts_with)
         if(DEFINED ENV{GITHUB_TOKEN})
-            set(CCRUTCH_GIT_URL_BASE "https://x-access-token:$ENV{GITHUB_TOKEN}@github.com/")
-            #set(GIT_URL_BASE "https://x-access-token:$ENV{GITHUB_TOKEN}@github.com/iKoznov-GitLab-Mirror")
+            set(_git_url_base "https://x-access-token:$ENV{GITHUB_TOKEN}@github.com/")
         else()
-            set(CCRUTCH_GIT_URL_BASE "https://github.com/")
+            set(_git_url_base "https://github.com/")
         endif()
     endif()
 
     string(FIND "${origin}" "git@github.com:" not_starts_with)
     if(NOT not_starts_with)
-        set(CCRUTCH_GIT_URL_BASE "git@github.com:")
+        set(_git_url_base "git@github.com:")
     endif()
 
-    if(NOT CCRUTCH_GIT_URL_BASE)
-        #set(CCRUTCH_GIT_URL_BASE "git@gitlab.com:" CACHE STRING "")
+    if(NOT _git_url_base)
         message(FATAL_ERROR "please provide git remote origin url")
     endif()
 
-    set(${ARG_OUTPUT_VARIABLE} "${CCRUTCH_GIT_URL_BASE}" CACHE STRING "")
+    set(${ARG_OUTPUT_VARIABLE} "${_git_url_base}" CACHE STRING "")
 endfunction()
 
 
@@ -82,12 +80,12 @@ function(ccrutch_fetch_sources name)
 
     ccrutch_get_git_url_base(
         GIT_REPO "${CMAKE_SOURCE_DIR}"
-        OUTPUT_VARIABLE CCRUTCH_GIT_URL_BASE
+        OUTPUT_VARIABLE _git_url_base
     )
 
     FetchContent_Declare(${name}
         SOURCE_DIR "${CCRUTCH_EXTERNAL_DIR}/${name}"
-        GIT_REPOSITORY "${CCRUTCH_GIT_URL_BASE}${ARG_GIT_REPO_NAME}.git"
+        GIT_REPOSITORY "${_git_url_base}${ARG_GIT_REPO_NAME}.git"
         GIT_TAG "${ARG_GIT_TAG}")
     FetchContent_GetProperties(${name})
 
